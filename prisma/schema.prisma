@@ -1,0 +1,7 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Baseline schema will be introspected via `npm run prisma:pull`
+// Remove this comment block once you've captured your production schema.

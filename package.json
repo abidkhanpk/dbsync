@@ -1,0 +1,18 @@
+{
+  "name": "schema-sync",
+  "private": true,
+  "devDependencies": {
+    "prisma": "^6.0.0"
+  },
+  "scripts": {
+    "prisma:pull": "prisma db pull",
+    "prisma:dev": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:status": "prisma migrate status",
+    "prisma:diff:dev->prod": "prisma migrate diff --from-url \"$DEV_DATABASE_URL\" --to-url \"$DATABASE_URL\" --shadow-database-url \"$SHADOW_DATABASE_URL\" --script",
+    "prisma:diff:prod->dev": "prisma migrate diff --from-url \"$DATABASE_URL\" --to-url \"$DEV_DATABASE_URL\" --shadow-database-url \"$SHADOW_DATABASE_URL\" --script",
+    "prisma:baseline:sql": "prisma migrate diff --from-empty --to-url \"$DATABASE_URL\" --script > prisma/migrations/000_init/migration.sql",
+    "prisma:mark:baseline:applied": "prisma migrate resolve --applied 000_init --changed 000_init",
+    "prisma:check": "prisma validate && prisma format && prisma migrate status"
+  }
+}
