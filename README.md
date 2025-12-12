@@ -112,11 +112,14 @@ Scripts rely on `DATABASE_URL`, `DEV_DATABASE_URL`, and `SHADOW_DATABASE_URL`. A
 
 ## CI/CD deployment
 - Workflow: `.github/workflows/prisma-deploy.yml`
-- Triggers: push to `main`, manual dispatch.
+- Current trigger: **manual only** via `workflow_dispatch`.
+  - Run on demand: GitHub → Actions → “Deploy Prisma Migrations” → “Run workflow”.
+  - CLI alternative: `gh workflow run "Deploy Prisma Migrations" --ref main`.
 - Steps: checkout → setup Node 20 → `npm ci` → `npm run prisma:deploy`.
 - Required GitHub secrets:
   - `PROD_DATABASE_URL` – production connection string.
   - `PROD_SHADOW_DATABASE_URL` – optional but recommended for schema diffing.
+- To re-enable deploys on push to `main`, uncomment the `push:` block in `.github/workflows/prisma-deploy.yml`.
 
 Test by running the workflow manually after seeding secrets. Use environments/required reviewers in GitHub for extra safety.
 
