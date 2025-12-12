@@ -14,9 +14,8 @@ coverage/
 
 # Environment and config
 .env
-.env.prod
-.env.local
-.env.dev
+.env.*
+!.env.example
 .DS_Store
 .idea/
 .vscode/
