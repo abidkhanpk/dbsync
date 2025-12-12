@@ -50,28 +50,28 @@ Tiny Node/Prisma workspace that versions your existing PostgreSQL/MySQL or other
    - Point `DATABASE_URL` at a *read-only* production user.
    - Run:
      ```sh
-     npm run prisma:pull
+     npx prisma db pull
      ```
    - Review `prisma/schema.prisma` for warnings; keep unsupported bits for SQL migrations.
 
 4. **Create baseline migration**
    ```sh
    mkdir -p prisma/migrations/000_init
-   npm run prisma:baseline:sql
+   npx prisma migrate diff --from-empty --to-url "$DATABASE_URL" --script > prisma/migrations/000_init/migration.sql
    ```
    - Append any existing views/triggers/functions manually so 000_init fully recreates prod.
 
 5. **Mark baseline as applied in production**
    - Ensure `DATABASE_URL` points to production.
    ```sh
-   npm run prisma:mark:baseline:applied
+   npx prisma migrate resolve --applied 000_init --changed 000_init
    ```
 
 6. **Apply baseline to dev**
    - Reset dev DB if needed.
    - With dev URLs active:
      ```sh
-     npm run prisma:deploy
+     npx prisma migrate deploy
      ```
 
 At this point dev and prod share migration `000_init`.
@@ -82,7 +82,7 @@ At this point dev and prod share migration `000_init`.
 1. Edit `prisma/schema.prisma` for a new feature (add columns, tables, etc.).
 2. Generate and apply a dev migration:
    ```sh
-   npm run prisma:dev -- --name descriptive_change
+   npx prisma migrate dev --name descriptive_change
    ```
 3. Review and adjust `prisma/migrations/<timestamp>_<name>/migration.sql`. Add manual SQL for views/triggers if needed.
 4. Commit the migration folder plus any schema changes.
@@ -94,6 +94,7 @@ Avoid `prisma db push`—migrate keeps change history and deploys safely.
 ---
 
 ## Useful npm scripts
+- You can run Prisma directly with `npx prisma ...`; the scripts below are shortcuts.
 | Script | Description |
 | ------ | ----------- |
 | `npm run prisma:pull` | Introspect current DB into `schema.prisma` |
@@ -129,7 +130,7 @@ Test by running the workflow manually after seeding secrets. Use environments/re
 - **Backups**: take a DB snapshot before initial baseline or risky migrations.
 - **Shadow DB perms**: ensure the shadow user may create/drop schemas (`migrate dev` needs it).
 - **Manual SQL**: keep non-Prisma objects (views, triggers, procedures) in migration SQL files.
-- **No Prisma Client**: we omit the generator; add it if you plan to use Prisma Client in code.
+- **Prisma Client**: generate with `npx prisma generate` when you need the client.
 - **Seeding**: embed SQL in migrations or handle seeding via existing tooling.
 - **Secrets**: never commit real credentials; use `.env` locally and GitHub secrets in CI.
 
